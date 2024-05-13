@@ -4,7 +4,6 @@ export const UsersList = ({ users, handlerRemoveUser, handlerUserSelectedForm })
     
     return(
         <>
-            <p>Listado de de usuarios</p>
             <table className="table table-over table-striped">
                 <thead>
                     <tr>
