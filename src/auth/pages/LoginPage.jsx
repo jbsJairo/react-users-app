@@ -7,7 +7,7 @@ const initialLoginForm = {
     password: '',
 }
 
-export const LoginPage = () => {
+export const LoginPage = ({ handlerLogin }) => {
 
 
     const [ loginForm, setLoginForm ] = useState(initialLoginForm);
@@ -28,12 +28,7 @@ export const LoginPage = () => {
         }
 
         //aca implementamos el login
-
-        if(username === 'admin' && password === '12345'){
-            // handlerLogin();
-        }else{
-            Swal.fire('Error Login', 'Username o password invalidos', 'error');
-        }
+        handlerLogin({ username, password });
 
         setLoginForm(initialLoginForm);
     }   
@@ -58,7 +53,7 @@ export const LoginPage = () => {
                             className="form-control my-3 w-75"
                             placeholder="Password"
                             value={ password }
-                            type="passwprd"
+                            type="password"
                             name="password"
                             onChange={ onInputChange } />    
                     </div>
