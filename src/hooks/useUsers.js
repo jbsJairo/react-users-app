@@ -2,16 +2,11 @@ import { useReducer, useState } from "react"
 import { usersReducer } from "../reducers/usersReducer";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { apiCreateUser, apiDeleteUser, apiUpdateUser, apiUsers } from "../services/userService";
 
 
-const initialUsers = [
-    {
-        id:1,
-        username: 'jairo',
-        password: '12345',
-        email: 'jbsegura1990@gmail.com'
-    }
-]
+
+const initialUsers = []
 
 const initialUserForm = {
     id: 0,
@@ -27,15 +22,36 @@ export const useUsers = () => {
     const [ visibleForm, setVisibleForm ] = useState(false);
     const navigate = useNavigate();
     
-    const handlerAddUser = (user) => {
+    const getUsers = async() => {
+        const result = await apiUsers();
+        dispatch({
+            type: 'loadingUsers',
+            payload: result.data,
+        });
+    }
+
+    const handlerAddUser = async (user) => {
+
+        let response;
+
+        if( user.id === 0 ){
+            response = await apiCreateUser(user);
+        }else{
+            response = await apiUpdateUser(user)
+        }
+
         dispatch({
             type: (user.id === 0)? 'addUser': 'updateUser',
-            payload: user,
+            payload: response.data,
         })
 
         Swal.fire(
-            (user.id === 0)? 'Usuario Creado' : 'Usuario Actualizado',
-            (user.id === 0)? 'El usuario ha sido creado con exito!' : 'El usuario ha sido actualizado con exito!',
+            (user.id === 0)? 
+                'Usuario Creado' : 
+                'Usuario Actualizado',
+            (user.id === 0)? 
+                'El usuario ha sido creado con exito!' : 
+                'El usuario ha sido actualizado con exito!',
             'success',
         );
 
@@ -54,6 +70,9 @@ export const useUsers = () => {
             confirmButtonText: "Si, eliminar!"
           }).then((result) => {
             if (result.isConfirmed) {
+
+                apiDeleteUser(id);
+                
                 dispatch({
                     type: 'removeUser',
                     payload: id,
@@ -92,5 +111,6 @@ export const useUsers = () => {
         handlerUserSelectedForm,
         handlerOpenForm,
         handlerCloseForm,
+        getUsers,
     }
 }
